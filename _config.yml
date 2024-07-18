@@ -8,7 +8,7 @@ plugins:
 # Multiple bookshops can be used on one website,
 # or different production / staging locations.
 bookshop_locations:
-  - ../component-library
+  - component-library
 
 exclude:
   - postcss.config.js
@@ -55,4 +55,3 @@ defaults:
 tag_page_dir: tag
 tag_page_layout: tag_page
 tag_permalink_style: /:title
-baseurl: "/site"
