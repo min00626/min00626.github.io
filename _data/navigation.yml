@@ -2,15 +2,8 @@ logo_image: '/images/logo.svg' # You can add own logo. For example '/images/logo
 
 menu__settings:
   menu__items:
-    - title: 'Home'
-      url: '/'
-    - title: 'Projects'
-      url: '/projects/'
-    - title: 'Blog'
-      url: '/blog/'
-    - title: 'Pages'
-      submenu:
-      - url: '/about/'
-        title: 'About'
-      - url: '/elements/'
-        title: 'Elements'
+
+    #- title: 'Pages'
+      #submenu:
+      #- url: '/about/'
+      #  title: 'About'
