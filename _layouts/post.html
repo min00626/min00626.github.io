@@ -35,17 +35,7 @@ layout: default
 
             <div class="post__meta-bottom">
 
-              <div class="post__dates">
-                  {% if page.date and page.date_end %}
-                    <time class="post__date" datetime="{{ page.date | date_to_xmlschema }}">
-                      {{ page.date | date: "%Y.%m.%d." }} - {{ page.date_end | date: "%Y.%m.%d." }}
-                    </time>
-                  {% elsif page.date %}
-                    <time class="post__date" datetime="{{ page.date | date_to_xmlschema }}">
-                      {{ page.date | date: "%Y.%m.%d." }}
-                    </time>
-                  {% endif %}
-              </div>
+
             </div>
           </div>
 
@@ -78,5 +68,4 @@ layout: default
   </div>
 </div>
 
-{% include related-posts.html %}
 

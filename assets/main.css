@@ -2698,6 +2698,10 @@ bookshop {
     word-break: keep-all;
   }
 
+  p {
+    word-break: keep-all;
+  }
+
   img,
   .lightense-wrap {
     max-width: 100%;

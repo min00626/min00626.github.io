@@ -9,8 +9,8 @@
           <div class="{{c}}__left">
             <h1 class="{{c}}__title">{{ include.title }}</h1>
             <div class="{{c}}__description">{{ include.description_html }}</div>
-            <div class="{{c}}__btn">
-              <a href="{{ include.cta_button_link }}" class="cta-button c-button c-button--primary c-button--small">{{ include.cta_button }}</a>
+            <div class="{{c}}__btn" >
+              <!--<a href="{{ include.cta_button_link }}" class="cta-button c-button c-button--primary c-button--small">{{ include.cta_button }}</a>-->
               <a class="works-button c-button c-button--secondary c-button--small" href="{{ include.works_button_link }}">
                 <span class="circle-bg"><i class="ion ion-md-arrow-down button-arrow"></i></span> {{ include.works_button }}
               </a>
@@ -18,9 +18,11 @@
           </div>
 
           <div class="{{c}}__right">
-            <div class="{{c}}__image">
-              <img loading="lazy" src="{{ include.image }}" alt="{{ include.hero_image_alt }}">
+            <div id="hero-image" data-images="{{ include.images | join: ',' }}">
+              <img src="{{ include.images[0] }}" alt="{{ include.hero_image_alt }}" class="active">
+              <img src="{{ include.images[1] }}" alt="{{ include.hero_image_alt }}">
             </div>
+            
           </div>
 
         </div>
@@ -29,3 +31,63 @@
   </div>
 </section>
 <!-- end hero -->
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+      var heroImageElement = document.getElementById('hero-image');
+      var images = heroImageElement.dataset.images.split(',');
+
+      var currentIndex = 0;
+      var nextIndex = 1;
+
+      // Select the two image elements
+      var img1 = heroImageElement.getElementsByTagName('img')[0];
+      var img2 = heroImageElement.getElementsByTagName('img')[1];
+
+      function changeImage() {
+          img1.classList.toggle('active');
+          img2.classList.toggle('active');
+
+          setTimeout(function() {
+              currentIndex = (currentIndex + 1) % images.length;
+              nextIndex = (nextIndex + 1) % images.length;
+
+              if (img1.classList.contains('active')) {
+                  img2.src = images[nextIndex].trim();
+              } else {
+                  img1.src = images[nextIndex].trim();
+              }
+          }, 1000); // Wait for the fade-in/out effect to complete
+      }
+
+      // Set the interval to change images every 3 seconds
+      setInterval(changeImage, 3000); // 2 seconds display + 1 second fade effect
+  });
+</script>
+
+<style>
+  #hero-image {
+    position: relative;
+    width: 100%;
+    max-width: 500px; /* 원하는 최대 너비 설정 */
+    height: 500px; /* 원하는 높이 설정 */
+    overflow: hidden;
+    margin: 0 auto; /* 중앙 정렬 */
+  }
+
+  #hero-image img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* 이미지 비율을 유지하며 요소 크기에 맞춤 */
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+    border-radius: 15px;
+  }
+
+  #hero-image img.active {
+    opacity: 1;
+  }
+</style>
