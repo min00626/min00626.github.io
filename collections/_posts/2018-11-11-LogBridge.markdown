@@ -1,5 +1,5 @@
 ---
-date: 2018-11-12 12:01:35
+date: 2018-11-11 12:01:35
 title: Log Bridge
 description: >-
   Lobby 기능 및 Peer to Peer 통신을 구현하여 외나무다리에서 전투를 벌이는 1대 1 대전 게임을 개발한 프로젝트입니다.

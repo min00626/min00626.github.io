@@ -1,5 +1,5 @@
 ---
-date: 2018-11-11 12:01:35
+date: 2018-11-12 12:01:35
 title: Gaussian Filtering With GPU
 description: >-
   CUDA를 통해 GPU를 사용하는 가우시안 필터링을 구현하고, 최적화 기법을 적용해 성능을 높인 프로젝트입니다.
