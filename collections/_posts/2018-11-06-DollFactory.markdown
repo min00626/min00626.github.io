@@ -18,7 +18,9 @@ image:  '/images/dollfactory_thumbnail.png'
     <a href="https://youtu.be/ytEtapBe1Go">
         <img src="http://img.youtube.com/vi/ytEtapBe1Go/sddefault.jpg" alt="Video Label" style="display: block; margin: 0 auto;">
     </a>
-        <p style="font-style: italic;">유튜브 영상 링크</p>
+</div>
+<div style="text-align: center; color: #888888; font-size: 14px; margin-top: 10px; margin-bottom: 30px;">
+  유튜브 영상 링크
 </div>
 
 ![DF](/images/doll2.gif){: width="1200" height="900"}

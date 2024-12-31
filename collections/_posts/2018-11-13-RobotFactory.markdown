@@ -15,7 +15,7 @@ image: /images/dots_thumbnail.png
 ## 프로젝트 개요
 몰려오는 수많은 적을 다양한 폭탄을 사용해 처치하는 뱀파이어 서바이버즈 스타일의 게임을 개발한 프로젝트입니다. 최적화에 특화된 디자인 패러다임인 Data-Oriented Design을 사용해 수많은 적이 등장하는 상황에서도 쾌적한 게임 환경을 유지할 수 있도록 하였습니다.
 
-전체 프로젝트 코드는 ![GitHub](https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png){: style="width: 20px; vertical-align: middle;"} [GitHub 리포지토리](https://github.com/min00626/DOTS/tree/master)에서 확인하실 수 있습니다.
+프로젝트의 전체 코드는 ![GitHub](https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png){: style="width: 20px; vertical-align: middle;"} [GitHub 리포지토리](https://github.com/min00626/DOTS/tree/master)에서 확인하실 수 있습니다.
 
 
 
