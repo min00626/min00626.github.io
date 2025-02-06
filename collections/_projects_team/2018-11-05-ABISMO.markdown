@@ -1,0 +1,316 @@
+---
+date:   2018-11-05 15:01:35 +0300
+title:  '[In Progress] Project ABISMO'
+description: 현재 진행 중인 프로젝트로, 다양한 미니게임과 스토리에 중점을 둔 2D 탑뷰 RPG 게임을 개발하고 있습니다.
+tags:   [Unity]
+image:  '/images/abismo_thumbnail.png'
+---
+
+## 프로젝트 개요
+
+Project ABISMO(이하 아비즈모)는 주인공이 작은 마을로 이사하며 펼쳐지는 이야기를 담은 게임입니다. 플레이어는 마을을 탐험하며 숨겨진 이야기를 찾아내거나 주민들과 교류할 수 있고, 낚시 또는 요리 등의 다양한 컨텐츠를 즐길 수 있습니다.
+
+***
+
+## 직책 및 담당 업무
+
+개발 팀장을 맡아 개발 전반을 관리하고 있습니다. 상세한 담당 업무는 다음과 같습니다.
+
+- 게임 시스템 설계 및 구현
+
+- 개발용 툴 제작 및 유지보수
+
+- 타 부서와의 회의 진행 및 협업
+
+- 업무 분담
+
+***
+
+## 작업물 예시
+
+#### 1. 게임 시스템 구현
+
+아래 코드 블럭은 퀘스트 시스템을 구현하기 위한 QuestManager의 코드입니다. QuestManager는 Singleton 패턴을 사용하고, 게임 시작 시 퀘스트 정보를 파싱하는 역할을 합니다. 
+
+<details>
+<summary>접기/펼치기</summary>
+<div markdown="1">
+
+```cs
+using System;
+using System.Collections.Generic;
+using Newtonsoft.Json;
+using UnityEngine;
+
+namespace Quest
+{
+	public class QuestManager : MonoBehaviour
+	{
+		public static QuestManager instance;
+
+		/// <summary>
+		/// Contains every quest data.
+		/// Use index of quest as key.
+		/// </summary>
+		private QuestNode[] questNodes;
+
+		public void Initialize()
+		{
+			if (instance == null)
+			{
+				instance = this;
+				DontDestroyOnLoad(gameObject);
+			}
+			else if (instance != this)
+			{
+				Destroy(gameObject);
+			}
+
+			LoadQuests();
+		}
+
+		/// <summary>
+		/// Called once at start of game. Load and parse Quest.json in Resource folder.
+		/// </summary>
+		/// <returns>
+		/// Returns <c>true</c> if the quests were successfully loaded and parsed; 
+		/// otherwise, <c>false</c>.
+		/// </returns>
+		private bool LoadQuests()
+		{
+			try
+			{
+				// Load JSON file from the Resources folder
+				TextAsset jsonFile = Resources.Load<TextAsset>("Quest");
+
+				if (jsonFile == null)
+				{
+					Debug.LogError("Quest.json file not found in Resources folder!");
+					return false;
+				}
+
+				// Parse JSON into QuestJsonData and extract quests array
+				QuestJsonData questData = JsonConvert.DeserializeObject<QuestJsonData>(jsonFile.text);
+
+				if (questData == null || questData.Quests == null || questData.Quests.Length == 0)
+				{
+					Debug.LogError("Failed to parse Quest.json or no quests defined!");
+					return false;
+				}
+
+				questNodes = questData.Quests;
+
+				Debug.Log($"Successfully loaded {questNodes.Length} quests.");
+				return true;
+			}
+			catch (Exception ex)
+			{
+				Debug.LogError($"Error loading Quest.json: {ex.Message}");
+				return false;
+			}
+		}
+
+		public class QuestNode
+		{
+			[JsonProperty("index")]
+			public int index { get; private set; }
+
+			[JsonProperty("condition")]
+			public QuestCondition condition { get; private set; }
+
+			[JsonProperty("info")]
+			public QuestInfo info { get; private set; }
+
+			[JsonProperty("stages")]
+			public List<QuestStage> stages { get; private set; }
+
+			[JsonProperty("children")]
+			public List<QuestNode> children { get; private set; }
+
+			public QuestNode(int index, QuestCondition condition, QuestInfo info, List<QuestStage> stages, List<QuestNode> children)
+			{
+				this.index = index;
+				this.condition = condition;
+				this.info = info;
+				this.stages = stages ?? new List<QuestStage>();
+				this.children = children ?? new List<QuestNode>();
+			}
+		}
+
+		public class QuestCondition
+		{
+			/// <summary>
+			/// Indices of quest must be cleared to receive this quest
+			/// </summary>
+			[JsonProperty("parentIndices")]
+			public List<int> ParentIndices { get; private set; }
+
+			/// <summary>
+			/// Number of days to wait until the QuestManager marks this quest
+			/// as Acceptable after the condition is met
+			/// </summary>
+			[JsonProperty("delayToBeAcceptable")]
+			public int DelayToBeAcceptable { get; private set; }
+
+			public QuestCondition(List<int> parentIndices, int delayToBeAcceptable)
+			{
+				this.ParentIndices = parentIndices ?? new List<int>();
+				this.DelayToBeAcceptable = delayToBeAcceptable;
+			}
+		}
+
+		public class QuestInfo
+		{
+			[JsonProperty("rewardItems")]
+			public List<ItemInfo> RewardItems { get; private set; }
+
+			[JsonProperty("rewardLenbo")]
+			public int RewardLenbo { get; private set; }
+
+			[JsonProperty("name")]
+			public string Name { get; private set; }
+
+			[JsonProperty("description")]
+			public string Description { get; private set; }
+
+			public QuestInfo(List<ItemInfo> rewardItems, int rewardLenbo, string name, string description)
+			{
+				this.RewardItems = rewardItems ?? new List<ItemInfo>();
+				this.RewardLenbo = rewardLenbo;
+				this.Name = name;
+				this.Description = description;
+			}
+		}
+
+		public class QuestStage
+		{
+			[JsonProperty("index")]
+			public int Index { get; private set; }
+
+			[JsonProperty("description")]
+			public string Description { get; private set; }
+
+			/// <summary>
+			/// List of (NPC Code, Dialogue Index)
+			/// </summary>
+			[JsonProperty("dialogues")]
+			public List<DialogueInfo> Dialogues { get; private set; }
+
+			/// <summary>
+			/// If this condition is satisfied, stage is cleared
+			/// </summary>
+			[JsonProperty("condition")]
+			public QuestStageCondition Condition { get; private set; }
+
+			/// <summary>
+			/// When a stage is cleared, every child will be activated
+			/// </summary>
+			[JsonProperty("children")]
+			public List<int> Children { get; private set; }
+
+			/// <summary>
+			/// Index of event which will be called at start of stage
+			/// </summary>
+			[JsonProperty("eventIndex_OnStart")]
+			public int EventIndex_OnStart { get; private set; }
+
+			/// <summary>
+			/// Index of event which will be called at end of stage
+			/// </summary>
+			[JsonProperty("eventIndex_OnEnd")]
+			public int EventIndex_OnEnd { get; private set; }
+
+			public QuestStage(int index, string description, List<DialogueInfo> dialogues,
+							  QuestStageCondition condition, List<int> children,
+							  int eventIndexOnStart, int eventIndexOnEnd)
+			{
+				this.Index = index;
+				this.Description = description;
+				this.Dialogues = dialogues ?? new List<DialogueInfo>();
+				this.Condition = condition;
+				this.Children = children ?? new List<int>();
+				this.EventIndex_OnStart = eventIndexOnStart;
+				this.EventIndex_OnEnd = eventIndexOnEnd;
+			}
+		}
+
+		public class QuestStageCondition
+		{
+			[JsonProperty("itemConditions")]
+			public List<ItemInfo> ItemConditions { get; private set; }
+
+			[JsonProperty("dialogueConditions")]
+			public List<int> DialogueConditions { get; private set; }
+
+			public QuestStageCondition(List<ItemInfo> itemConditions, List<int> dialogueConditions)
+			{
+				this.ItemConditions = itemConditions ?? new List<ItemInfo>();
+				this.DialogueConditions = dialogueConditions ?? new List<int>();
+			}
+		}
+
+		public struct ItemInfo
+		{
+			[JsonProperty("itemCode")]
+			public int ItemCode { get; private set; }
+
+			[JsonProperty("itemAmount")]
+			public int ItemAmount { get; private set; }
+
+			public ItemInfo(int itemCode, int itemAmount)
+			{
+				this.ItemCode = itemCode;
+				this.ItemAmount = itemAmount;
+			}
+		}
+
+		public struct DialogueInfo
+		{
+			[JsonProperty("npcCode")]
+			public int NpcCode { get; private set; }
+
+			[JsonProperty("dialogueIndex")]
+			public int DialogueIndex { get; private set; }
+
+			public DialogueInfo(int npcCode, int dialogueIndex)
+			{
+				this.NpcCode = npcCode;
+				this.DialogueIndex = dialogueIndex;
+			}
+		}
+
+		public class QuestJsonData
+		{
+			public QuestNode[] Quests { get; set; }
+		}
+
+	}
+}
+```
+
+</div>
+</details>
+
+<br>
+
+#### 2. 개발용 툴 제작
+
+시나리오 팀이 효율적으로 퀘스트 정보를 기입하고 관리할 수 있도록 퀘스트 그래프 에디터를 제작하였습니다.
+
+  ![RL](/images/datagraph_thumbnail.png){: .center-img width="500" }
+
+
+퀘스트 그래프 에디터에 대한 자세한 정보는 🔗[이 링크](../../personalprojects/customgrapheditor)에서 확인하실 수 있습니다.
+
+***
+
+## 인게임 화면
+
+개발 중인 인게임 화면의 예시입니다.
+
+![RL](/images/abismo_thumbnail.png){: width="1200" height="900"}
+
+
+
+
+

@@ -1,0 +1,10 @@
+{% if include.show_posts %}
+<div class="container animate">
+  <div class="row" data-pagebreak="6">
+    {% for project in site.projects_team %}
+      {% bookshop blog-card post=project %}
+    {% endfor %}
+  </div>
+</div>
+
+{% endif %}

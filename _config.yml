@@ -30,7 +30,10 @@ collections:
     output: false
   posts:
     output: true
-    permalink: /blog/:slug
+    permalink: /personalprojects/:slug
+  projects_team:
+    output: true
+    permalink: /teamprojects/:slug
 
 defaults:
   - scope:
@@ -50,6 +53,10 @@ defaults:
       type: posts
     values:
       layout: post
+  - scope:
+      type: projects_team
+    values:
+      layout: teamprojects
 
 # Tags
 tag_page_dir: tag

@@ -81,7 +81,23 @@ bookshop {
     /* 1 */
     font-size: 1em;
     /* 2 */
+
   }
+
+  code {
+
+    white-space: pre;
+    /* 자동 줄바꿈 방지 */
+    overflow-x: auto;
+    /* 가로 스크롤 활성화 */
+
+  }
+
+  .center-img {
+    display: block;
+    margin: 0 auto;
+  }
+
 
   /* Text-level semantics
      ========================================================================== */
@@ -4681,6 +4697,29 @@ bookshop {
 
   .c-hero__btn .works-button .button-arrow {
     color: #fff;
+  }
+
+  .c-hero__btn .works-button:hover .circle-bg--primary {
+    transition: all 0.2s cubic-bezier(0.215, 0.61, 0.355, 1);
+    transform: scale(0.94);
+  }
+
+  .c-hero__btn .works-button .circle-bg--primary {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    height: 18px;
+    margin-right: 8px;
+    font-size: 14px;
+    border-radius: 50%;
+    will-change: transform;
+    background: #fff;
+    transition: all 0.2s cubic-bezier(0.215, 0.61, 0.355, 1);
+  }
+
+  .c-hero__btn .works-button .button-arrow--primary {
+    color: #1495a7;
   }
 }
 
