@@ -1,0 +1,10 @@
+<div class="video-embed">
+  <iframe
+    src="https://www.youtube.com/embed/{{ include.id }}?rel=0{% if include.start %}&start={{ include.start }}{% endif %}"
+    title="{% if include.title %}{{ include.title | escape }}{% else %}YouTube video player{% endif %}"
+    frameborder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    referrerpolicy="strict-origin-when-cross-origin"
+    allowfullscreen>
+  </iframe>
+</div>

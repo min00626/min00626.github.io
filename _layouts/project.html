@@ -2,14 +2,20 @@
 layout: default
 ---
 
+<link rel="stylesheet" href="{{ '/assets/css/toc.css' | relative_url }}">
+
 <div class="container">
 
   {% bookshop page-heading title=page.title description=page.subtitle %}
   {% assign page_image = site.baseurl | append: page.image %}
   {% bookshop page-image image=page_image %}
 
-  <div class="page animate">
-    {{ content }}
+  <div class="page-with-toc">
+    <main class="page-main">
+      <div class="page animate page-article">
+        {{ content }}
+      </div>
+    </main>
   </div>
 
   {% if page.previous.url %}
@@ -24,6 +30,10 @@ layout: default
   {% endif %}
 
 </div>
+
+<aside class="floating-toc">
+  {% include toc.html %}
+</aside>
 
 {% bookshop
   newsletter newsletter_title=site.data.newsletter.newsletter_title

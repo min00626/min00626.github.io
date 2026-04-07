@@ -2,6 +2,8 @@
 layout: default
 ---
 
+<link rel="stylesheet" href="{{ '/assets/css/toc.css' | relative_url }}">
+
 <div class="post-top">
   <div class="container">
     <div class="row">
@@ -48,15 +50,13 @@ layout: default
 <!-- begin post -->
 <div class="container animate">
 
-  <article class="post">
+<article class="post page-article">
+  <div class="post__content">
+    {{ content }}
+  </div>
+</article>
 
-    <div class="post__content">
-      {{ content }}
-    </div>
 
-    
-
-  </article>
 </div>
 <!-- end post -->
 
@@ -68,4 +68,6 @@ layout: default
   </div>
 </div>
 
-
+<aside class="floating-toc">
+  {% include toc.html %}
+</aside>

@@ -1,0 +1,234 @@
+---
+date:   2026-03-31 15:01:35 +0300
+title:  'Project R'
+description: 각양각색의 컨텐츠를 제공하는 서브컬쳐 MMORPG입니다.
+tags:   [Unity]
+image:  '/images/reiw/reiw_thumbnail.png'
+---
+
+## 프로젝트 개요
+
+Project R은 높은 커스터마이징 자유도와 다양한 컨텐츠를 제공하는 서브컬쳐 MMORPG입니다.
+
+메인 스토리와 서브 퀘스트를 중심으로, 낚시와 같은 미니게임, PVE 및 PVP 등 다양한 플레이 경험을 제공합니다.
+
+---
+
+## 주요 작업
+
+- **[ADV Tool](#adv-tool)**  
+  대화 흐름과 연출을 그래프와 타임라인으로 제작할 수 있는 커스텀 에디터 툴을 개발하였습니다.
+
+- **[낚시](#낚시)**  
+  스테이트머신과 서버 동기화를 기반으로 동작하는 미니게임 컨텐츠를 구현하였습니다.
+
+---
+
+## ADV Tool
+
+ADV 툴은  **대화문과, 대화문에 연결된 연출을 편집하기 위한 커스텀 에디터 툴**입니다. ADV 툴은 기능에 따라 크게 두 부분으로 나눌 수 있습니다.
+1. **ADV 그래프**  
+대화문을 그래프 형태로 편집합니다.
+2. **ADV 타임라인**  
+각 대화문에 연결된 연출을 편집합니다.
+
+
+<br/>
+
+### 시연 영상
+
+{% include youtube.html id="u7sZGuiK19U" %}
+
+<br/>
+
+### ADV 그래프
+
+<figure class="image-figure">
+  <img src="/images/reiw/advgraph.png" alt="ADV Graph 구조도">
+  <figcaption>ADV 그래프 예시</figcaption>
+</figure>
+
+GraphView API를 기반으로 대화문을 그래프 형태로 표현합니다.  
+카메라 포커싱 및 오프셋, 캐릭터 페이셜 및 애니메이션 등의 연출을 사전에 정의하여 간편하게 적용할 수 있습니다.  
+노드 자동 정렬, 오류 검출 등의 편의 기능을 제공하며, 다양한 단축키를 제공해 생산성을 높였습니다.
+
+
+
+ADV 그래프는 MVP 패턴을 기반으로 설계되었습니다.  
+<div class="mermaid">
+flowchart LR
+    View[AdvGraphView] <--> Presenter[AdvGraphPresenter]
+    Presenter <--> Model[AdvGraphModel]
+</div>
+
+MVVM 대신 MVP 패턴을 채택한 이유는, 데이터 바인딩 기반 갱신 방식이 그래프 구조에서는 불필요한 연산을 유발할 수 있기 때문입니다.
+
+<br/>
+
+#### 데이터 모델 구조
+
+ADV 그래프의 각 노드 모델은 개별 `ScriptableObject`로 구성되며, 그래프 모델의 서브애셋으로 관리됩니다.  
+<div class="mermaid">
+flowchart LR
+    Graph[AdvGraphModel]
+
+    subgraph Nodes[Sub Assets]
+        Node1[AdvNodeModel]
+        Node2[AdvNodeModel]
+        Node3[AdvNodeModel]
+    end
+
+    Graph --> Nodes
+</div>
+
+이러한 구조를 채택한 이유는 다음과 같습니다.
+
+1. **Undo 처리 단위 최적화**  
+   `Undo.RecordObject` 호출 시 그래프 전체가 아닌 노드 단위로 기록할 수 있어, 에디터 비용이 감소하고 변경점을 직관적으로 기록할 수 있습니다.
+
+2. **SerializedObject 기반 에디터 확장성**  
+   각 노드 모델을 `SerializedObject`로 직접 다룰 수 있어, 프로퍼티 단위 편집과 노드 뷰 구현이 용이합니다.
+
+3. **에디터 디버깅 및 가시성**  
+   각 노드 모델을 인스펙터에서 직접 확인할 수 있어 디버깅과 유지보수가 용이합니다.
+
+<br/>
+
+#### 오류 검출
+
+작업자의 편의를 위해, 그래프를 분석하여 오류를 검출하는 기능을 제공합니다. 오류는 심각도에 따라 `Error`와 `Warning`으로 구분됩니다.
+
+<figure class="image-figure">
+  <img src="/images/reiw/advgraph_validate.png" alt="ADV Graph 구조도">
+  <figcaption>검출된 오류가 출력되는 모습</figcaption>
+</figure>
+
+이 기능은 오류를 가질 위험이 있는 일부 노드 모델이 특정 인터페이스를 구현하는 방식으로 구현되었습니다. 오류 검출 시 노드 모델을 순회하며, `ErrorCode`와 에러가 발생한 노드의 GUID를 수집해 출력합니다.
+
+<br/>
+
+### ADV 타임라인
+
+ADV 그래프의 각 대화문 노드에는 타임라인 애셋이 연결되어 있습니다. 타임라인 애셋을 편집하여 대화문 출력 시 재생될 연출을 편집할 수 있습니다.
+
+연출 편집을 위해 다양한 커스텀 트랙 및 마커를 제공합니다. ADV 타임라인에서 제공하는 기능은 다음과 같습니다.
+
+1. 캐릭터 페이셜 및 애니메이션
+2. 카메라 타게팅 및 애니메이션
+3. 오브젝트 스폰 및 애니메이션
+4. 페이드 인 / 아웃
+5. BGM, SFX 재생 및 페이드
+6. 포스트 프로세싱
+7. 월페이퍼 연출
+
+<br/>
+
+#### 런타임 바인딩
+
+타임라인 바인딩은 항상 런타임에, 대화문 재생이 시작될 때 수행됩니다.  
+따라서 바인딩 대상이 모호한 타임라인 트랙의 경우, 커스텀 에디터를 통해 바인딩 대상을 지정합니다.
+
+<figure class="image-figure">
+  <img src="/images/reiw/advtimeline_binding.gif" alt="ADV Graph 구조도">
+  <figcaption>NPC 애니메이션을 컨트롤하는 NpcAnimationTrack의 예시</figcaption>
+</figure>
+
+바인딩 대상은 트랙 애셋에 저장되며, 대화문 재생 시작 시 씬 내의 바인딩 대상을 찾아 바인딩합니다.
+
+<br/>
+
+#### 자동 바인딩
+
+일부 트랙은 바인딩 대상이 명백합니다. 예를 들어, 카메라 애니메이션을 컨트롤하는 CameraControlTrack은 항상 ADV용 Cinemachine Virtual Camera에 바인딩됩니다.
+바인딩 대상이 명백한 트랙은 생성 시 자동으로 바인딩됩니다.
+
+<figure class="image-figure">
+  <img src="/images/reiw/advtimeline_autobind.gif" alt="ADV Graph 구조도">
+  <figcaption>CameraControlTrack 생성 시 자동 바인딩</figcaption>
+</figure>
+
+자동 바인딩 기능은 TrackEditor를 상속하고, OnCreate 함수를 override하여 구현하였습니다.
+
+<div class="mermaid">
+classDiagram
+    class TrackEditor {
+        +OnCreate()
+    }
+
+    class AutoBindTrackEditorBase {
+        +OnCreate() override
+        +ResolveBindingTarget()
+    }
+
+    class AutoBindCameraControlTrackEditor {
+        +ResolveBindingTarget() override
+    }
+
+    class AutoBindFadeTrackEditor {
+        +ResolveBindingTarget() override
+    }
+
+    class Etc {
+        +ResolveBindingTarget() override
+    }
+
+    TrackEditor <|-- AutoBindTrackEditorBase
+    AutoBindTrackEditorBase <|-- AutoBindCameraControlTrackEditor
+    AutoBindTrackEditorBase <|-- AutoBindFadeTrackEditor
+    AutoBindTrackEditorBase <|-- Etc
+</div>
+
+---
+
+## 낚시
+
+낚시는 지정된 위치에서 시작할 수 있는 미니게임 컨텐츠입니다.  
+스테이트머신 기반으로 작동하며, 진행 상황은 서버와 동기화됩니다.
+
+<br/>
+
+### 시연 영상
+
+{% include youtube.html id="MiF13epRTSw" %}
+
+<br/>
+
+### 스테이트머신
+
+스테이트머신의 구조는 다음과 같습니다.
+
+<div class="mermaid">
+stateDiagram-v2
+    direction LR
+
+    [*] --> Normal
+    Normal --> Casting
+    Casting --> Struggle
+    Struggle --> Reeling
+
+    Reeling --> Lift: Gauge Full
+    Reeling --> Struggle: Gauge Not Full
+
+    Lift --> Casting
+</div>
+
+현재 상태에 따라 캐릭터 애니메이션, UI 등이 변경되는 구조로 구현하였습니다.
+
+<br/>
+
+### 서버 동기화
+
+플레이어 입력은 서버로 전달되어, 서버 검증 후 스테이트머신에 변경점이 반영됩니다.
+
+<div class="mermaid">
+sequenceDiagram
+    participant P as Player
+    participant C as Client
+    participant S as Server
+
+    P->>C: Player Input
+    C->>S: Send Req
+    S-->>C: Ack
+    C->>C: Update State Machine
+</div>
+
