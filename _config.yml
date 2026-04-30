@@ -1,4 +1,5 @@
 title: Vonge
+markdown: kramdown
 
 plugins:
   - jekyll-bookshop
@@ -33,7 +34,7 @@ collections:
     permalink: /personalprojects/:slug
   projects_team:
     output: true
-    permalink: /teamprojects/:slug
+    permalink: /projects/:slug
 
 defaults:
   - scope:
@@ -62,3 +63,6 @@ defaults:
 tag_page_dir: tag
 tag_page_layout: tag_page
 tag_permalink_style: /:title
+
+kramdown:
+  input: GFM

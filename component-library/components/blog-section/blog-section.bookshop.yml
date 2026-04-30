@@ -13,6 +13,7 @@ blueprint:
   title: ""
   description_html: ""
   link_url: ""
+  section_id: ""
   show_posts: true
 
 # Overrides any fields in the blueprint when viewing this component in the component browser

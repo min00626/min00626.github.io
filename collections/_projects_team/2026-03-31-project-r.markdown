@@ -721,3 +721,5 @@ private static List<T> ReadCore<T>(string path, IBinarySerializer<T> serializer,
     return list;
 }
 ```
+
+</details>

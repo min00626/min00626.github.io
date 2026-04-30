@@ -2588,9 +2588,13 @@ bookshop {
 
   html {
     scroll-behavior: smooth;
+    overflow-x: clip;
+    overflow-x: hidden;
   }
 
   body {
+    overflow-x: clip;
+    overflow-x: hidden;
     font-family: "Noto Sans KR", Helvetica Neue, Helvetica, Arial, sans-serif;
     font-size: 18px;
     line-height: 1.8;
@@ -2815,6 +2819,18 @@ bookshop {
     display: block;
     max-width: 100%;
     overflow-x: auto;
+  }
+
+  .mermaid {
+    display: block;
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .mermaid svg {
+    display: block;
+    height: auto;
   }
 
   table {
@@ -3603,20 +3619,16 @@ bookshop {
   .post-image {
     position: relative;
     transform: translate(0);
-    padding-top: 100%;
-    min-height: 280px;
     border-radius: 16px;
     overflow: hidden;
     background: #d5dce3;
   }
 
   .post-image img {
-    position: absolute;
-    top: 0;
-    left: 0;
+    display: block;
     width: 100%;
-    height: 100%;
-    object-fit: cover;
+    height: auto;
+    object-fit: contain;
     user-select: none;
   }
 }
@@ -3819,6 +3831,13 @@ bookshop {
     text-decoration: none;
   }
 
+  .post__content,
+  .page-article {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    overflow-x: auto;
+  }
+
   .post__share {
     margin: 32px 0 60px;
   }
@@ -3911,8 +3930,30 @@ bookshop {
 
 @media all,
 bookshop {
+  .post-bottom-sections {
+    position: relative;
+    margin-top: 96px;
+    padding-top: 34px;
+  }
+
+  .post-bottom-sections::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, rgba(20, 149, 167, 0.85) 0%, rgba(20, 149, 167, 0.35) 48%, rgba(20, 149, 167, 0) 100%);
+  }
+
+  .post-navigation-wrap {
+    margin-top: 0;
+  }
+
   .post__navigation {
     display: flex;
+    gap: 20px;
     justify-content: space-between;
   }
 
@@ -3921,16 +3962,20 @@ bookshop {
     display: flex;
     align-items: center;
     width: 49%;
-    padding: 28px;
+    padding: 20px;
     margin-bottom: 20px;
     border-radius: 16px;
-    background: linear-gradient(90deg, #1495a7 0%, #003687 167%);
-    transition: transform 0.2s;
+    border: 1px solid #eceff1;
+    background: #fff;
+    box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.07);
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
   }
 
-  .post__navigation .post__prev:hover,
-  .post__navigation .post__next:hover {
+  .post__navigation a.post__prev:hover,
+  .post__navigation a.post__next:hover {
     transform: translateY(-3px);
+    border-color: rgba(20, 149, 167, 0.45);
+    box-shadow: 0px 20px 40px rgba(0, 0, 0, 0.1);
   }
 
   .post__navigation .post__prev .prev__image,
@@ -3939,12 +3984,13 @@ bookshop {
   .post__navigation .post__next .next__image {
     position: relative;
     transform: translate(0);
-    display: block;
-    min-width: 125px;
-    height: 110px;
-    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 108px;
+    height: 90px;
+    border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0px 0px 40px rgba(0, 0, 0, 0.15);
     background-color: #d5dce3;
   }
 
@@ -3970,29 +4016,49 @@ bookshop {
     margin-left: 20px;
   }
 
+  .post__navigation .post__prev .empty__image,
+  .post__navigation .post__next .empty__image {
+    font-size: 24px;
+    color: rgba(38, 56, 60, 0.45);
+  }
+
   .post__navigation .post__prev .post__nav,
   .post__navigation .post__next .post__nav {
     display: inline-block;
     margin-bottom: 6px;
-    font-size: 14px;
+    font-size: 12px;
     line-height: 1;
-    font-weight: 500;
-    color: #fff;
-    opacity: 0.7;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: rgba(38, 56, 60, 0.55);
   }
 
   .post__navigation .post__prev .post__nav__title,
   .post__navigation .post__next .post__nav__title {
     margin-bottom: 0;
-    font-size: 21px;
+    font-size: 22px;
     line-height: 1.4;
     font-weight: 700;
-    color: #fff;
+    color: #26383c;
+  }
+
+  .post__navigation .post__prev .post__nav__title a,
+  .post__navigation .post__next .post__nav__title a {
+    color: #26383c;
+    border-bottom: none;
   }
 
   .post__navigation .post__prev .post__nav__title a:hover,
   .post__navigation .post__next .post__nav__title a:hover {
-    color: #fff;
+    color: #2666cf;
+  }
+
+  .post__navigation .is-empty {
+    background: rgba(213, 220, 227, 0.35);
+  }
+
+  .post__navigation .is-empty .post__nav__title {
+    color: rgba(38, 56, 60, 0.7);
   }
 
   .post__navigation .post__next {
@@ -4027,13 +4093,26 @@ bookshop {
 }
 
 @media only screen and (max-width: 576px) {
+  .post-bottom-sections {
+    margin-top: 72px;
+    padding-top: 26px;
+  }
+
+  .post-bottom-sections::before {
+    height: 2px;
+  }
+
+  .post-navigation-wrap {
+    margin-top: 0;
+  }
+
   .post__navigation {
     margin-bottom: 0;
   }
 
   .post__navigation .post__prev,
   .post__navigation .post__next {
-    padding: 20px;
+    padding: 16px;
   }
 
   .post__navigation .post__prev .post__nav__title,

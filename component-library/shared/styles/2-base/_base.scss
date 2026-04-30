@@ -4,10 +4,14 @@
 
 html {
   scroll-behavior: smooth;
+  overflow-x: clip;
+  overflow-x: hidden;
 
 }
 
 body {
+  overflow-x: clip;
+  overflow-x: hidden;
   font-family: $base-font-family;
   font-size: $base-font-size;
   line-height: $base-line-height;
@@ -203,6 +207,18 @@ hr {
   display: block;
   max-width: 100%;
   overflow-x: auto;
+}
+
+.mermaid {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.mermaid svg {
+  display: block;
+  height: auto;
 }
 
 table {

@@ -1,25 +1,80 @@
-<div class="post__navigation animate">
-  {% if page.previous.url %}
-  <a class="post__prev" href="{{page.previous.url}}">
-    <div class="prev__image">
-      <img loading="lazy" src="{{site.baseurl}}{{page.previous.image}}" alt="{{ page.title }}">
-    </div>
-    <div class="prev__box">
-      <span class="post__nav post__nav__prev">Prev post</span>
-      <h2 class="post__nav__title">{{page.previous.title}}</h2>
-    </div>
-  </a>
-  {% endif %}
+{% assign current_collection = page.collection %}
 
-  {% if page.next.url %}
-  <a class="post__next" href="{{page.next.url}}">
-    <div class="next__box">
-      <span class="post__nav post__nav__next">Next post</span>
-      <h2 class="post__nav__title">{{page.next.title}}</h2>
-    </div>
-    <div class="next__image">
-      <img loading="lazy" src="{{site.baseurl}}{{page.next.image}}" alt="{{ page.title }}">
-    </div>
-  </a>
+{% if current_collection == blank %}
+  {% if page.path contains '_posts' %}
+    {% assign current_collection = 'posts' %}
+  {% elsif page.path contains '_projects_team' %}
+    {% assign current_collection = 'projects_team' %}
+  {% elsif page.path contains '_projects' %}
+    {% assign current_collection = 'projects' %}
   {% endif %}
+{% endif %}
+
+{% if current_collection == "posts" %}
+  {% assign nav_title = "개인 프로젝트" %}
+  {% assign nav_link = "/personalprojects/" %}
+  {% assign nav_label = "전체 개인 프로젝트 보기" %}
+{% elsif current_collection == "projects" or current_collection == "projects_team" %}
+  {% assign nav_title = "재직 중 참여 프로젝트" %}
+  {% assign nav_link = "/projects/" %}
+  {% assign nav_label = "전체 프로젝트 보기" %}
+{% else %}
+  {% assign nav_title = "프로젝트" %}
+  {% assign nav_link = "/projects/" %}
+  {% assign nav_label = "전체 프로젝트 보기" %}
+{% endif %}
+
+<div class="post-navigation-wrap animate">
+  <div class="section__info post-navigation__header">
+    <div class="section__head">
+      <h2 class="section__title">{{ nav_title }}</h2>
+      <a class="section__link" href="{{ nav_link | relative_url }}">{{ nav_label }} <i class="ion ion-md-arrow-forward"></i></a>
+    </div>
+  </div>
+
+  <div class="post__navigation">
+    {% if page.previous.url %}
+    <a class="post__prev" href="{{ page.previous.url }}">
+      <div class="prev__image">
+        <img loading="lazy" src="{{ site.baseurl }}{{ page.previous.image }}" alt="{{ page.previous.title }}">
+      </div>
+      <div class="prev__box">
+        <span class="post__nav post__nav__prev">이전 포스트</span>
+        <h2 class="post__nav__title">{{ page.previous.title }}</h2>
+      </div>
+    </a>
+    {% else %}
+    <div class="post__prev is-empty">
+      <div class="prev__image empty__image" aria-hidden="true">
+        <i class="ion ion-md-arrow-back"></i>
+      </div>
+      <div class="prev__box">
+        <span class="post__nav post__nav__prev">이전 포스트</span>
+        <h2 class="post__nav__title">이전 포스트가 없습니다.</h2>
+      </div>
+    </div>
+    {% endif %}
+
+    {% if page.next.url %}
+    <a class="post__next" href="{{ page.next.url }}">
+      <div class="next__box">
+        <span class="post__nav post__nav__next">다음 포스트</span>
+        <h2 class="post__nav__title">{{ page.next.title }}</h2>
+      </div>
+      <div class="next__image">
+        <img loading="lazy" src="{{ site.baseurl }}{{ page.next.image }}" alt="{{ page.next.title }}">
+      </div>
+    </a>
+    {% else %}
+    <div class="post__next is-empty">
+      <div class="next__box">
+        <span class="post__nav post__nav__next">다음 포스트</span>
+        <h2 class="post__nav__title">다음 포스트가 없습니다.</h2>
+      </div>
+      <div class="next__image empty__image" aria-hidden="true">
+        <i class="ion ion-md-arrow-forward"></i>
+      </div>
+    </div>
+    {% endif %}
+  </div>
 </div>

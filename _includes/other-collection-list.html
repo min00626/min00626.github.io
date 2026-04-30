@@ -1,0 +1,64 @@
+{% assign current_collection = page.collection %}
+
+{% if current_collection == blank %}
+  {% if page.path contains '_posts' %}
+    {% assign current_collection = 'posts' %}
+  {% elsif page.path contains '_projects_team' %}
+    {% assign current_collection = 'projects_team' %}
+  {% elsif page.path contains '_projects' %}
+    {% assign current_collection = 'projects' %}
+  {% endif %}
+{% endif %}
+
+{% if current_collection == "posts" %}
+  {% if site.collections['projects_team'] and site.collections['projects_team'].docs %}
+    {% assign other_items = site.collections['projects_team'].docs | sort: 'date' | reverse %}
+  {% elsif site.projects_team %}
+    {% assign other_items = site.projects_team | sort: 'date' | reverse %}
+  {% elsif site.collections['projects'] and site.collections['projects'].docs %}
+    {% assign other_items = site.collections['projects'].docs | sort: 'date' | reverse %}
+  {% elsif site.projects %}
+    {% assign other_items = site.projects | sort: 'date' | reverse %}
+  {% endif %}
+  {% assign section_title = "재직 중 참여 프로젝트" %}
+  {% assign section_link = "/projects/" %}
+  {% assign section_label = "전체 프로젝트 보기" %}
+{% elsif current_collection == "projects" or current_collection == "projects_team" %}
+  {% if site.collections['posts'] and site.collections['posts'].docs %}
+    {% assign other_items = site.collections['posts'].docs | sort: 'date' | reverse %}
+  {% elsif site.posts %}
+    {% assign other_items = site.posts | sort: 'date' | reverse %}
+  {% endif %}
+  {% assign section_title = "개인 프로젝트" %}
+  {% assign section_link = "/personalprojects/" %}
+  {% assign section_label = "전체 개인 프로젝트 보기" %}
+{% endif %}
+
+{% if other_items and other_items.size > 0 %}
+<div class="container">
+  <section class="section blog">
+    <div class="row">
+      <div class="col col-12">
+        <div class="contaniner__inner animate">
+          <div class="section__info">
+            <div class="section__head">
+              <h2 class="section__title">{{ section_title }}</h2>
+              <a class="section__link" href="{{ section_link | relative_url }}">{{ section_label }} <i class="ion ion-md-arrow-forward"></i></a>
+            </div>
+          </div>
+          <div class="row">
+            {% assign other_count = 0 %}
+            {% for item in other_items %}
+              {% if other_count >= 3 %}{% break %}{% endif %}
+              {% if item.url != page.url %}
+                {% bookshop blog-card post=item %}
+                {% assign other_count = other_count | plus: 1 %}
+              {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+{% endif %}
